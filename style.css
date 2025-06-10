@@ -1,0 +1,115 @@
+
+ 
+:root {
+  --bg: #fff0f5;
+  --panel: #ffe6f2;
+  --accent: #450179;
+  --accent-dark: #d94f94;
+  --text: #4d0039;
+  --error: #ff3366;
+  --success: #33cc99;
+  --border: #ffcce0;
+}
+ 
+/* Fundo com waifu */
+body {
+  background-color: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-size: 300px;
+  background-position: bottom right;
+}
+ 
+
+h1 {
+  color: var(--accent-dark);
+  font-size: 28px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+ 
+/* Texto */
+p {
+  max-width: 600px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+ 
+
+form {
+  background-color: var(--panel);
+  padding: 20px 30px;
+  margin: 10px 0;
+  border-radius: 16px;
+  border: 3px dashed var(--accent);
+  animation: glitter 2s infinite ease-in-out;
+  width: 100%;
+  max-width: 480px;
+}
+ 
+/* Labels kawaii */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--accent-dark);
+  font-size: 16px;
+}
+ 
+/* Inputs suaves */
+input[type="text"] {
+  width: 100%;
+  padding: 10px 1px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+}
+ 
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+ 
+/* Mensagens de validação */
+output {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  min-height: 20px;
+}
+ 
+output:empty {
+  display: none;
+}
+ 
+output:contains("❌"), output:contains("✖️") {
+  color: var(--error);
+}
+ 
+output:contains("✅") {
+  color: var(--success);
+}
+ 
+/* Responsivo */
+@media (max-width: 500px) {
+  body {
+    padding: 20px 10px;
+    background-size: 180px;
+    background-position: bottom right;
+  }
+ 
+  form {
+    padding: 20px;
+  }
+}
+ 
+ 

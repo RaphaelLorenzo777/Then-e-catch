@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Then e Catch</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Then e Catch usando AbortController</h1>
+    <p>Nesta demonstração, vamos tratar do uso encadeado do then/catch para resolução de Promises usando um AbortController para evitar respostas consecutivas de chamadas de função que deveriam ter sido canceladas.</p>
+ 
+    <form>
+        <label for="nomeRepositorio">Nome do repositório*</label>
+        <input type="text" id="nomeRepositorio" onkeyup="validarNomeRepositorio()" required autofocus>
+        <output id="outputNomeRepositorio"></output>
+    </form>
+ 
+    <form>
+        <label for="senha">Senha*</label>
+        <input type="text" id="senha" onkeyup="validarSenhaValida()" required>
+        <output id="outputSenha"></output>
+    </form>
+ 
+    <script>
+        const outputNomeRepositorio = document.getElementById('outputNomeRepositorio');
+        const repositóriosExistentes = ["api-com-fastapi", "pagina-cidade", "cadastro-vingadores"];
+        const outputSenha = document.getElementById("outputSenha");
+ 
+        // Repositório
+        function criarValidadores(){
+            let controller = new AbortController();
+ 
+            function verificarNomeRepositorioDisponivel(nome, signal) {
+                return new Promise((resolve, reject) => {
+                    const atraso = setTimeout(() => {
+                        if (signal.aborted) {
+                            reject("✖️ Consulta cancelada.");
+                            return;
+                        }
+                        if (repositóriosExistentes.includes(nome.toLowerCase())) {
+                            reject(`❌ O repositório "${nome}" já existe. Escolha outro nome.`);
+                        } else {
+                            resolve(`✅ O nome "${nome}" está disponível.`);
+                        }
+                    }, 1000);
+ 
+                    signal.addEventListener("abort", () => clearTimeout(atraso));
+                });
+            }
+ 
+            function validarNomeRepositorio() {
+                const nomeRepositorio = document.getElementById("nomeRepositorio").value.trim();
+ 
+                if (nomeRepositorio.length < 3) {
+                    outputNomeRepositorio.innerText = "O nome do repositório deve ter pelo menos 3 caracteres.";
+                    return;
+                }
+ 
+                controller.abort();
+                controller = new AbortController();
+ 
+                verificarNomeRepositorioDisponivel(nomeRepositorio, controller.signal)
+                    .then(mensagem => outputNomeRepositorio.innerHTML = mensagem)
+                    .catch(erro => outputNomeRepositorio.innerHTML = erro);
+            }
+ 
+            return validarNomeRepositorio;
+        }
+ 
+        const validarNomeRepositorio = criarValidadores();
+ 
+        // Senha
+        function criarSenhaValidator() {
+            let controllerSenha = new AbortController();
+ 
+            function verificarSenhaValida(senha, signal) {
+                return new Promise((resolve, reject) => {
+                    const atraso = setTimeout(() => {
+                        if (signal.aborted) {
+                            reject("✖️ Verificação de senha cancelada.");
+                            return;
+                        }
+ 
+                        const erros = [];
+                        if (senha.length < 8) {
+                            erros.push("❌ A senha deve ter pelo menos 8 caracteres.");
+                        }
+                        if (!/[0-9]/.test(senha)) {
+                            erros.push("❌ A senha deve possuir pelo menos um número.");
+                        }
+                        if (!/[A-Z]/.test(senha)) {
+                            erros.push("❌ A senha deve ter pelo menos uma letra maiúscula.");
+                        }
+                        if (!/[!@#&*()\[\]{}~]/.test(senha)) {
+                            erros.push("❌ A senha deve conter pelo menos um caractere especial: ! @ # & * ( ) [ ] { } ~.");
+                        }
+ 
+                        if (erros.length > 0) {
+                            reject(erros.join("<br>"));
+                        } else {
+                            resolve("✅ Senha válida.");
+                        }
+                    }, 1000);
+ 
+                    signal.addEventListener("abort", () => clearTimeout(atraso));
+                });
+            }
+ 
+            function validarSenhaValida() {
+                const senha = document.getElementById("senha").value.trim();
+ 
+                controllerSenha.abort();
+                controllerSenha = new AbortController();
+ 
+                verificarSenhaValida(senha, controllerSenha.signal)
+                    .then(mensagem => outputSenha.innerHTML = mensagem)
+                    .catch(erro => outputSenha.innerHTML = erro);
+            }
+ 
+            return validarSenhaValida;
+        }
+ 
+        const validarSenhaValida = criarSenhaValidator();
+    </script>
+</body>
+</html>
+ 
